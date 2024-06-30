@@ -96,6 +96,8 @@ def get_pizzas():
 @app.route('/restaurant_pizzas', methods=['POST'])
 def assign_restaurant_pizzas():
     data = request.get_json()
+
+    
     
     if not data or "pizza_id" not in data or "restaurant_id" not in data:
         return jsonify({"error": "Validation failed. Missing pizza_id or restaurant_id in request."}), 400
@@ -109,7 +111,10 @@ def assign_restaurant_pizzas():
     restaurant = Restaurant.query.get(restaurant_id)
     
     if not pizza or not restaurant:
-        return jsonify({"error": "Validation failed. Pizza or Restaurant not found."}), 400
+        return jsonify({"error": "Validation failed. Pizza or Restaurant not found."}), 404
+    
+    if not (1 <= data["price"] <=30 ):
+        return jsonify ({"errors": ["validation errors"]}), 400
     
     # Create new RestaurantPizza entry
     new_rp = RestaurantPizza(
