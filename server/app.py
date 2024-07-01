@@ -81,6 +81,28 @@ def get_pizzas():
         "name": pizza.name
     } for pizza in pizzas])
 
+@app.route('/pizzas/<int:id>', methods = ['GET'])
+def get_pizza(id):
+    pizza = db.session.get(Pizza, id)
+    if not pizza:
+        return jsonify({'msg': 'pizza not found'})
+    pizza_data = {
+        'id': pizza.id,
+        'name': pizza.name,
+        'ingredients': pizza.ingredients,
+        'restaurant_pizzas': [{
+            'id': rp.id,
+            'price': rp.price,
+            'restaurant': {
+                'id': rp.restaurant.id,
+                'name': rp.restaurant.name,
+                'address': rp.restaurant.address
+            }
+        } for rp in pizza.restaurant_pizza]
+    }
+    
+
+    return jsonify(pizza_data)
 # restaurant_pizza routes
 @app.route('/restaurant_pizzas', methods=['POST'])
 def assign_restaurant_pizzas():
